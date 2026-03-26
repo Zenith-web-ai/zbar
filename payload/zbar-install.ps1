@@ -195,7 +195,7 @@ try {
 }
 
 # Copy each file
-$filesToCopy = @("zbar.ps1", "blocklist.txt", "zbar-check.ps1")
+$filesToCopy = @("zbar.ps1", "blocklist.txt", "zbar-check.ps1", "zbar-launcher.vbs")
 $allFilesCopied = $true
 
 foreach ($fileName in $filesToCopy) {
@@ -253,18 +253,40 @@ try {
 # ============================================================
 Log "  --- Setting Up Persistence ---"
 
-$exe = "powershell.exe"
-$arg = "-ExecutionPolicy Bypass -WindowStyle Hidden -File `"$installDir\zbar.ps1`""
+# Copy VBS launcher for invisible execution
+$vbsLauncher = Join-Path $installDir "zbar-launcher.vbs"
+$vbsSrc = Join-Path $sourceDir "zbar-launcher.vbs"
+if (Test-Path $vbsSrc) {
+    Copy-Item -Path $vbsSrc -Destination $vbsLauncher -Force
+    LogPass "VBS launcher copied (invisible window)"
+} else {
+    # Create it inline if not in payload
+    $vbsContent = 'Set shell = CreateObject("WScript.Shell")' + "`r`n" +
+        'shell.Run "powershell.exe -ExecutionPolicy Bypass -WindowStyle Hidden -NonInteractive -File ""C:\ProgramData\zbar\zbar.ps1""", 0, False'
+    [IO.File]::WriteAllText($vbsLauncher, $vbsContent)
+    LogPass "VBS launcher created inline (invisible window)"
+}
+
+# Use VBS launcher as the task action (truly hidden, no window flash)
+$exe = "wscript.exe"
+$arg = "`"$vbsLauncher`""
+
+# Direct PowerShell fallback (for methods that can't use VBS)
+$psExe = "powershell.exe"
+$psArg = "-ExecutionPolicy Bypass -WindowStyle Hidden -NonInteractive -File `"$installDir\zbar.ps1`""
+
 $persistSuccess = $false
 
-# --- Method 1: Register-ScheduledTask (current user) ---
+# --- Method 1: Register-ScheduledTask (SYSTEM - most powerful, no window, can kill anything) ---
 Log ""
-LogInfo "Method 1: Register-ScheduledTask (current user)..."
+LogInfo "Method 1: Register-ScheduledTask (SYSTEM + Highest)..."
 try {
-    $action = New-ScheduledTaskAction -Execute $exe -Argument $arg
+    $action = New-ScheduledTaskAction -Execute $psExe -Argument $psArg
 
     $trigger1 = New-ScheduledTaskTrigger -AtStartup
     $trigger2 = New-ScheduledTaskTrigger -AtLogOn
+
+    $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest -LogonType ServiceAccount
 
     $settings = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
@@ -275,14 +297,14 @@ try {
         -RestartCount 999
     $settings.DisallowStartIfOnBatteries = $false
 
-    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger1,$trigger2 -Settings $settings -Force -ErrorAction Stop | Out-Null
+    Register-ScheduledTask -TaskName $taskName -Action $action -Trigger $trigger1,$trigger2 -Principal $principal -Settings $settings -Force -ErrorAction Stop | Out-Null
 
     # Verify
     $verifyTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
     if ($verifyTask) {
-        LogPass "Scheduled task created (current user) - State: $($verifyTask.State)"
+        LogPass "Scheduled task created (SYSTEM + Highest) - State: $($verifyTask.State)"
         $persistSuccess = $true
-        $persistMethod = "ScheduledTask (current user)"
+        $persistMethod = "ScheduledTask (SYSTEM)"
     } else {
         LogFail "Task registered but verification failed"
     }
@@ -290,17 +312,17 @@ try {
     LogWarn "Method 1 failed: $($_.Exception.Message)"
 }
 
-# --- Method 2: Register-ScheduledTask (SYSTEM) ---
+# --- Method 2: Register-ScheduledTask (current user + Highest + VBS launcher) ---
 if (-not $persistSuccess) {
     Log ""
-    LogInfo "Method 2: Register-ScheduledTask (SYSTEM)..."
+    LogInfo "Method 2: Register-ScheduledTask (current user + Highest + VBS)..."
     try {
         $action = New-ScheduledTaskAction -Execute $exe -Argument $arg
 
         $trigger1 = New-ScheduledTaskTrigger -AtStartup
         $trigger2 = New-ScheduledTaskTrigger -AtLogOn
 
-        $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest -LogonType ServiceAccount
+        $principal = New-ScheduledTaskPrincipal -UserId "$env:USERDOMAIN\$env:USERNAME" -RunLevel Highest -LogonType InteractiveToken
 
         $settings = New-ScheduledTaskSettingsSet `
             -AllowStartIfOnBatteries `
@@ -316,9 +338,9 @@ if (-not $persistSuccess) {
         # Verify
         $verifyTask = Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue
         if ($verifyTask) {
-            LogPass "Scheduled task created (SYSTEM) - State: $($verifyTask.State)"
+            LogPass "Scheduled task created (current user + Highest + VBS) - State: $($verifyTask.State)"
             $persistSuccess = $true
-            $persistMethod = "ScheduledTask (SYSTEM)"
+            $persistMethod = "ScheduledTask (current user + Highest)"
         } else {
             LogFail "Task registered but verification failed"
         }
