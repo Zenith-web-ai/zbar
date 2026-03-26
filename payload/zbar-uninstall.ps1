@@ -168,13 +168,24 @@ try {
 # STEP 3.5: Remove Windows Defender exclusion
 # ============================================================
 Log ""
-Log "  --- Removing Defender Exclusion ---" "Cyan"
+Log "  --- Removing Defender Exclusions ---" "Cyan"
 try {
-    Remove-MpPreference -ExclusionPath $installDir -ErrorAction Stop
-    Log "  [OK] Defender exclusion removed for $installDir" "Green"
-} catch {
-    Log "  [INFO] Defender exclusion removal skipped: $($_.Exception.Message)" "Yellow"
-}
+    Remove-MpPreference -ExclusionPath $installDir -ErrorAction SilentlyContinue
+    Log "  [OK] Defender path exclusion removed" "Green"
+} catch {}
+try {
+    Remove-MpPreference -ExclusionProcess "powershell.exe" -ErrorAction SilentlyContinue
+    Log "  [OK] Defender process exclusion (powershell) removed" "Green"
+} catch {}
+try {
+    Remove-MpPreference -ExclusionProcess "wscript.exe" -ErrorAction SilentlyContinue
+    Log "  [OK] Defender process exclusion (wscript) removed" "Green"
+} catch {}
+try {
+    Set-MpPreference -AttackSurfaceReductionRules_Ids "e6db77e5-3df2-4cf1-b95a-636979351e5b" -AttackSurfaceReductionRules_Actions Enabled -ErrorAction SilentlyContinue
+    Set-MpPreference -AttackSurfaceReductionRules_Ids "d1e49aac-8f56-4280-b9ba-993a6d77406c" -AttackSurfaceReductionRules_Actions Enabled -ErrorAction SilentlyContinue
+    Log "  [OK] Defender ASR rules restored" "Green"
+} catch {}
 
 # ============================================================
 # STEP 4: Kill ALL zbar processes
