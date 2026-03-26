@@ -1,5 +1,5 @@
 # zbar - Process blocker
-# Checks every 5 minutes, kills processes matching blocklist
+# Checks every 30 seconds, kills processes matching blocklist
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $blocklistFile = Join-Path $scriptDir "blocklist.txt"
@@ -31,5 +31,5 @@ while ($true) {
         }
     }
 
-    Start-Sleep -Seconds 300
+    Start-Sleep -Seconds 30
 }
