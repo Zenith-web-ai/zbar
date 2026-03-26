@@ -1,0 +1,268 @@
+# ============================================================
+# zbar blocklist - one process name per line (without .exe)
+# Lines starting with # are ignored
+# Edit this file to add/remove processes
+# Changes take effect within 5 minutes (no restart needed)
+# ============================================================
+
+# --- Gaming Platforms & Launchers ---
+steam
+steamwebhelper
+steamservice
+GameOverlayUI
+EpicGamesLauncher
+EpicWebHelper
+RiotClientServices
+RiotClientUx
+RiotClientCrashHandler
+vgtray
+Battle.net
+BlizzardBrowser
+EADesktop
+EABackgroundService
+EAConnect_microsoft
+Origin
+OriginWebHelperService
+UbisoftConnect
+upc
+UplayWebCore
+GalaxyClient
+GalaxyClientHelper
+GameBar
+GameBarPresenceWriter
+
+# --- Fortnite ---
+FortniteClient-Win64-Shipping
+FortniteLauncher
+
+# --- Minecraft ---
+Minecraft.Windows
+MinecraftLauncher
+# javaw  # Minecraft Java Edition — WARNING: also kills any Java app
+
+# --- Roblox ---
+RobloxPlayerBeta
+RobloxPlayerLauncher
+
+# --- Valorant ---
+VALORANT-Win64-Shipping
+VALORANT
+
+# --- League of Legends ---
+LeagueClient
+LeagueClientUx
+League of Legends
+
+# --- Counter-Strike 2 ---
+cs2
+
+# --- Apex Legends ---
+r5apex
+
+# --- Call of Duty (various) ---
+cod
+ModernWarfare
+cod23-cod
+BlackOpsColdWar
+
+# --- GTA V / GTA Online ---
+GTA5
+PlayGTAV
+GTAVLauncher
+
+# --- Overwatch 2 ---
+Overwatch
+
+# --- Rocket League ---
+RocketLeague
+
+# --- Dota 2 ---
+dota2
+
+# --- PUBG ---
+TslGame
+PUBG-Win64-Shipping
+
+# --- Elden Ring ---
+eldenring
+
+# --- Baldur's Gate 3 ---
+bg3
+bg3_dx11
+
+# --- Hogwarts Legacy ---
+HogwartsLegacy
+
+# --- Genshin Impact ---
+GenshinImpact
+YuanShen
+
+# --- Destiny 2 ---
+destiny2
+
+# --- Rainbow Six Siege ---
+RainbowSix
+RainbowSix_BE
+
+# --- EA Sports FC / FIFA ---
+FC24
+FC25
+FIFA23
+FIFA24
+
+# --- Madden ---
+Madden24
+Madden25
+
+# --- NBA 2K ---
+NBA2K24
+NBA2K25
+NBA2K26
+
+# --- Diablo IV ---
+Diablo IV
+
+# --- World of Warcraft ---
+Wow
+WowClassic
+
+# --- Starfield ---
+Starfield
+
+# --- Cyberpunk 2077 ---
+Cyberpunk2077
+
+# --- The Sims 4 ---
+TS4_x64
+
+# --- Palworld ---
+Palworld-Win64-Shipping
+
+# --- Lethal Company ---
+Lethal Company
+
+# --- Among Us ---
+Among Us
+
+# --- Fall Guys ---
+FallGuys_client_game
+
+# --- Dead by Daylight ---
+DeadByDaylight-Win64-Shipping
+
+# --- Rust ---
+RustClient
+
+# --- ARK: Survival Evolved / Ascended ---
+ShooterGame
+ArkAscended
+
+# --- Terraria ---
+Terraria
+
+# --- Stardew Valley ---
+Stardew Valley
+
+# --- Halo Infinite ---
+HaloInfinite
+
+# --- Sea of Thieves ---
+SoTGame
+
+# --- Monster Hunter ---
+MonsterHunterWorld
+MonsterHunterRise
+
+# --- Tekken 8 ---
+Tekken8
+TEKKEN 8
+
+# --- Street Fighter 6 ---
+StreetFighter6
+
+# --- Mortal Kombat 1 ---
+MK1
+
+# --- Civilization VI ---
+CivVI
+
+# --- Total War ---
+Warhammer3
+Warhammer2
+Rome2
+
+# --- Stellaris ---
+stellaris
+
+# --- Hearts of Iron IV ---
+hoi4
+
+# --- Warframe ---
+Warframe.x64
+
+# --- Path of Exile ---
+PathOfExile
+PathOfExileSteam
+PathOfExile_x64Steam
+
+# --- Lost Ark ---
+LOSTARK
+
+# --- Final Fantasy XIV ---
+ffxiv_dx11
+
+# --- Escape from Tarkov ---
+EscapeFromTarkov
+
+# --- DayZ ---
+DayZ
+DayZ_BE
+
+# --- Ready or Not ---
+ReadyOrNot-Win64-Shipping
+
+# --- Hell Let Loose ---
+HLL-Win64-Shipping
+
+# --- Deep Rock Galactic ---
+FSD-Win64-Shipping
+
+# --- Phasmophobia ---
+Phasmophobia
+
+# --- Satisfactory ---
+FactoryGame-Win64-Shipping
+
+# --- Factorio ---
+factorio
+
+# --- Cities: Skylines II ---
+Cities2
+
+# --- Euro Truck Simulator 2 ---
+eurotrucks2
+
+# --- Microsoft Flight Simulator ---
+FlightSimulator
+
+# --- Wuthering Waves ---
+Wuthering Waves
+WutheringWaves
+
+# --- Zenless Zone Zero ---
+ZenlessZoneZero
+
+# --- Honkai: Star Rail ---
+StarRail
+
+# --- The Finals ---
+TheFinals
+Discovery
+
+# --- Other popular games ---
+Naraka-Win64-Shipping
+GranblueFantasyRelink
+TEKKEN 7
+DragonBallFighterZ
+Pal-Win64-Shipping
+SatisfactoryEarlyAccess-Win64-Shipping
